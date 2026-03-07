@@ -71,6 +71,7 @@ export default function DashboardPage() {
     }
 
     const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
+    const [streak, setStreak] = useState(0);
 
     // 1. INIT
     useEffect(() => {
@@ -82,6 +83,14 @@ export default function DashboardPage() {
                 setUserData(payload);
                 setViewRole(payload.role);
                 fetchStreak(token);
+
+                const streakRes = await fetch('https://dsm-api-backend.onrender.com/notes/my-streak', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (streakRes.ok) {
+                    const streakData = await streakRes.json();
+                    setStreak(streakData.streak);
+                }
 
                 // NẾU LÀ ADMIN, GỌI API THỐNG KÊ DATA HÔM QUA
                 if (payload.role === 'admin') {
@@ -262,7 +271,15 @@ export default function DashboardPage() {
                                 <div className="w-12 h-12 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center text-xl shadow-sm">👤</div>
                             )}
                             <div>
-                                <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">DSM Workspace</h1>
+                                <div className="flex items-center space-x-2">
+                                    <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">Total DSM Workspace</h1>
+
+                                    {/* HUY HIỆU STREAK TẠI ĐÂY */}
+                                    <div className="flex items-center bg-orange-50 text-orange-600 px-2.5 py-0.5 rounded-full border border-orange-200 shadow-sm cursor-default hover:scale-105 transition-transform" title="Chuỗi ngày viết nhật ký liên tiếp">
+                                        <span className="text-sm">🔥</span>
+                                        <span className="font-black text-sm ml-1">{streak}</span>
+                                    </div>
+                                </div>
                                 <p className="text-gray-500 text-sm">Xin chào, <span className="font-bold text-blue-600">{profileName || userData.sub}</span></p>
                             </div>
                             {userData.role === 'admin' && (
