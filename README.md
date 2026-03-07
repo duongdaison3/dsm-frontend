@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💻 TOTAL DSM WebApp - Frontend Client
 
-## Getting Started
+Giao diện người dùng cho nền tảng **Daily Standup Meeting (DSM)**. Được xây dựng theo phong cách SaaS hiện đại, tập trung vào trải nghiệm người dùng (UX) mượt mà và giao diện (UI) tối giản, chuyên nghiệp.
 
-First, run the development server:
+## 🛠️ Công nghệ sử dụng
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework:** [Next.js 14](https://nextjs.org/) (App Router).
+- **UI Library:** [React](https://react.dev/).
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework.
+- **Language:** TypeScript.
+- **Deployment:** [Vercel](https://vercel.com/).
+
+## ✨ Điểm nổi bật về UI/UX
+
+- **Thiết kế Responsive:** Hoạt động hoàn hảo trên mọi kích thước màn hình.
+- **Auto-resize Textarea:** Form nhập liệu thông minh, tự động co giãn theo lượng text người dùng nhập.
+- **Admin Dashboard:** Trực quan hóa dữ liệu bằng Progress Bar sinh động, hiển thị tỷ lệ nộp báo cáo theo thời gian thực.
+- **SaaS Footer:** Tích hợp bộ đếm số lượng Standup toàn hệ thống gọi trực tiếp từ API.
+
+## 🚀 Hướng dẫn cài đặt
+
+**1. Clone kho lưu trữ này về máy:**
+
+```
+git clone [https://github.com/duongdaison3/dsm-frontend.git]
+cd dsm-frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**2. Cài đặt các gói thư viện Node.js:**
+`npm install`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**3. Khởi chạy Development Server:**
+`npm run dev`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Mở trình duyệt (ví dụ: Edge) và truy cập `http://localhost:3000` để xem kết quả.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+👨‍💻 Tác giả: Pea Dương - Sinh viên năm cuối Khoa CNTT @ Đại học Phenikaa.
