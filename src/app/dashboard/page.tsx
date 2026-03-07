@@ -85,7 +85,7 @@ export default function DashboardPage() {
 
                 // NẾU LÀ ADMIN, GỌI API THỐNG KÊ DATA HÔM QUA
                 if (payload.role === 'admin') {
-                    const res = await fetch('http://localhost:8000/notes/admin/stats', {
+                    const res = await fetch('https://dsm-api-backend.onrender.com/notes/admin/stats', {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     if (res.ok) setAdminStats(await res.json());
@@ -97,7 +97,7 @@ export default function DashboardPage() {
 
     const fetchStreak = async (token: string) => {
         try {
-            const res = await fetch('http://localhost:8000/notes/streak', { headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await fetch('https://dsm-api-backend.onrender.com/notes/streak', { headers: { 'Authorization': `Bearer ${token}` } });
             if (res.ok) setStreakDates(await res.json());
         } catch (e) { }
     };
@@ -107,7 +107,7 @@ export default function DashboardPage() {
         setShowProfileModal(true);
         const token = localStorage.getItem('access_token');
         try {
-            const res = await fetch('http://localhost:8000/users/me', { headers: { 'Authorization': `Bearer ${token}` } });
+            const res = await fetch('https://dsm-api-backend.onrender.com/users/me', { headers: { 'Authorization': `Bearer ${token}` } });
             if (res.ok) {
                 const data = await res.json();
                 setProfileName(data.full_name || ''); setProfileDob(data.dob || ''); setProfileAvatar(data.avatar_url || '');
@@ -119,7 +119,7 @@ export default function DashboardPage() {
         e.preventDefault(); setIsUpdatingProfile(true);
         const token = localStorage.getItem('access_token');
         try {
-            const res = await fetch('http://localhost:8000/users/me', {
+            const res = await fetch('https://dsm-api-backend.onrender.com/users/me', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ full_name: profileName, dob: profileDob || null, avatar_url: profileAvatar || null })
@@ -144,7 +144,7 @@ export default function DashboardPage() {
         if (streakDates.includes(isoDate)) {
             const token = localStorage.getItem('access_token');
             try {
-                const res = await fetch(`http://localhost:8000/notes/${isoDate}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const res = await fetch(`https://dsm-api-backend.onrender.com/notes/${isoDate}`, { headers: { 'Authorization': `Bearer ${token}` } });
                 if (res.ok) setViewingNote(await res.json());
             } catch (e) { }
         } else { setShowPopup(true); }
@@ -155,7 +155,7 @@ export default function DashboardPage() {
         e.preventDefault(); setIsSubmitting(true);
         const token = localStorage.getItem('access_token');
         try {
-            const res = await fetch('http://localhost:8000/notes/', {
+            const res = await fetch('https://dsm-api-backend.onrender.com/notes/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({
@@ -191,7 +191,7 @@ export default function DashboardPage() {
                 const iso = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
 
                 if (streakDates.includes(iso)) {
-                    const res = await fetch(`http://localhost:8000/notes/${iso}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                    const res = await fetch(`https://dsm-api-backend.onrender.com/notes/${iso}`, { headers: { 'Authorization': `Bearer ${token}` } });
                     if (res.ok) {
                         const note = await res.json();
                         weeklyDataText += `--- Ngày ${iso} ---\nHighlight: ${note.highlight}\nBlockers: ${note.blockers}\n`;
@@ -201,7 +201,7 @@ export default function DashboardPage() {
             }
 
             // Bắn cục data này lên Gemini
-            const aiRes = await fetch('http://localhost:8000/reports/generate', {
+            const aiRes = await fetch('https://dsm-api-backend.onrender.com/reports/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ weekly_notes: weeklyDataText })
@@ -216,7 +216,7 @@ export default function DashboardPage() {
         e.preventDefault();
         const token = localStorage.getItem('access_token');
         try {
-            const res = await fetch('http://localhost:8000/users/', {
+            const res = await fetch('https://dsm-api-backend.onrender.com/users/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ email: newEmail, password: newPassword, full_name: newName, role: newRole })

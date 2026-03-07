@@ -9,7 +9,7 @@ export default function Footer() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await fetch('http://localhost:8000/notes/stats/monthly-public');
+                const res = await fetch('https://dsm-api-backend.onrender.com/notes/stats/monthly-public');
                 if (res.ok) {
                     const data = await res.json();
                     setStandupCount(data.current_month_count);
