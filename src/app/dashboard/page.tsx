@@ -72,6 +72,7 @@ export default function DashboardPage() {
 
     const [adminStats, setAdminStats] = useState<AdminStats | null>(null);
     const [streak, setStreak] = useState(0);
+    const [toastMsg, setToastMsg] = useState('');
 
     // 1. INIT
     useEffect(() => {
@@ -175,7 +176,8 @@ export default function DashboardPage() {
                 }),
             });
             if (!res.ok) throw new Error((await res.json()).detail);
-            alert("Đã lưu nhật ký thành công!");
+            setToastMsg('🎉 Đã lưu nhật ký thành công!');
+            setTimeout(() => setToastMsg(''), 3000); // Tự động tắt sau 3 giây
             setHighlight(''); setFollowUp(''); setBlockers(''); setOnePercentBetter(''); setMeetingNotes(''); setPlannedTasks('');
             fetchStreak(token!);
         } catch (e: Error | unknown) { alert("Lỗi: " + (e instanceof Error ? e.message : 'Lỗi không xác định')); } finally { setIsSubmitting(false); }
@@ -602,6 +604,14 @@ export default function DashboardPage() {
                                 </div>
                             </form>
                         </div>
+                    </div>
+                )}
+
+                {/* TOAST THÔNG BÁO NỔI */}
+                {toastMsg && (
+                    <div className="fixed bottom-10 right-10 bg-green-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center space-x-3 animate-bounce z-50 transition-all">
+                        <span className="text-2xl">✅</span>
+                        <span className="font-bold text-lg">{toastMsg}</span>
                     </div>
                 )}
             </div>
