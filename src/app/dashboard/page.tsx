@@ -305,9 +305,9 @@ export default function DashboardPage() {
 
                 {/* ================= GIAO DIỆN ADMIN ================= */}
                 {viewRole === 'admin' && (
-                    <div className="grid grid-cols-3 gap-6">
-                        <div className="col-span-2 space-y-6">
-                            <div className="bg-white rounded-xl shadow p-6 border-t-4 border-indigo-500">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 space-y-6">
+                            <div className="lg:col-span-1 bg-white rounded-xl shadow p-6 border-t-4 border-indigo-500">
                                 <h2 className="font-bold text-xl text-gray-800 mb-6">
                                     📊 Thống kê (Hôm qua: {typeof adminStats?.yesterday_str === 'string' ? adminStats.yesterday_str : '...'})
                                 </h2>
@@ -392,10 +392,10 @@ export default function DashboardPage() {
 
                 {/* GIAO DIỆN STAFF/DEPART */}
                 {(viewRole === 'staff' || viewRole === 'depart') && (
-                    <div className="grid grid-cols-12 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                         {/* LỊCH (BÊN TRÁI) */}
-                        <div className="col-span-4 bg-white rounded-xl shadow p-6 border-t-4 border-blue-500">
+                        <div className="lg:col-span-4 bg-white rounded-xl shadow p-6 border-t-4 border-blue-500">
                             {/*... Lưới lịch giữ nguyên logic cũ ...*/}
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="font-bold text-lg text-gray-800">Lịch Hoạt Động</h3>
@@ -437,7 +437,7 @@ export default function DashboardPage() {
                         </div>
 
                         {/* FORM / READ MODE (BÊN PHẢI) */}
-                        <div className="col-span-8 space-y-6">
+                        <div className="lg:col-span-8 space-y-6">
 
                             {/* NẾU LÀ HÔM NAY -> HIỆN FORM */}
                             {selectedDate && selectedDate.toDateString() === new Date().toDateString() && (
@@ -540,6 +540,12 @@ export default function DashboardPage() {
                                         <div className="p-3 bg-gray-50 rounded-lg border"><p className="font-bold text-gray-700">⭐ Highlight:</p><p>{viewingNote.highlight}</p></div>
                                         <div className="p-3 bg-gray-50 rounded-lg border"><p className="font-bold text-gray-700">🚀 Follow-up:</p><p>{viewingNote.follow_up}</p></div>
                                         <div className="p-3 bg-red-50 rounded-lg border border-red-100"><p className="font-bold text-red-700">🚧 Blockers:</p><p className="text-red-600">{viewingNote.blockers}</p></div>
+                                        {viewingNote.one_percent_better && (
+                                            <div className="p-3 bg-green-50 rounded-lg border border-green-100">
+                                                <p className="font-bold text-green-700">🌱 1% Better:</p>
+                                                <p className="text-green-600">{viewingNote.one_percent_better}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
