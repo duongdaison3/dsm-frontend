@@ -76,24 +76,44 @@ export default function DashboardPage() {
     const [streak, setStreak] = useState(0);
     const [toastMsg, setToastMsg] = useState('');
 
+    // Helper function to fetch streak
+    const fetchStreak = async (token: string) => {
+        try {
+            const streakRes = await fetch('https://dsm-api-backend.onrender.com/notes/my-streak', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (streakRes.ok) {
+                const streakData = await streakRes.json();
+                setStreak(streakData.streak);
+            }
+        } catch (error) {
+            console.error("Lỗi lấy streak:", error);
+        }
+    };
+
     // 1. INIT
     useEffect(() => {
         const initDashboard = async () => {
             const token = localStorage.getItem('access_token');
-            if (!token) return router.push('/login');
+
+            // Tránh trường hợp bộ nhớ tạm bị kẹt chữ "undefined"
+            if (!token || token === 'undefined') {
+                localStorage.removeItem('access_token');
+                return router.push('/login');
+            }
+
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                // GIẢI MÃ JWT SIÊU AN TOÀN (Tự động bù padding và xử lý ký tự đặc biệt)
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const pad = base64.length % 4;
+                const paddedBase64 = pad ? base64 + '='.repeat(4 - pad) : base64;
+                const payload = JSON.parse(atob(paddedBase64));
+
                 setUserData(payload);
                 setViewRole(payload.role);
                 fetchStreak(token);
 
-                const streakRes = await fetch('https://dsm-api-backend.onrender.com/notes/my-streak', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (streakRes.ok) {
-                    const streakData = await streakRes.json();
-                    setStreak(streakData.streak);
-                }
 
                 // NẾU LÀ ADMIN, GỌI API THỐNG KÊ DATA HÔM QUA
                 if (payload.role === 'admin') {
@@ -102,17 +122,16 @@ export default function DashboardPage() {
                     });
                     if (res.ok) setAdminStats(await res.json());
                 }
-            } catch (error) { router.push('/login'); }
+            } catch (error) {
+                // BẮT LỖI VÀ HIỂN THỊ RÕ RÀNG THAY VÌ ÂM THẦM REDIRECT
+                console.error("Lỗi khởi tạo Dashboard:", error);
+                alert("Lỗi tải giao diện: " + (error instanceof Error ? error.message : "Lỗi không xác định"));
+                localStorage.removeItem('access_token');
+                router.push('/login');
+            }
         };
         initDashboard();
     }, [router]);
-
-    const fetchStreak = async (token: string) => {
-        try {
-            const res = await fetch('https://dsm-api-backend.onrender.com/notes/streak', { headers: { 'Authorization': `Bearer ${token}` } });
-            if (res.ok) setStreakDates(await res.json());
-        } catch (e) { }
-    };
 
     // 2. PROFILE LOGIC
     const handleOpenProfile = async () => {
