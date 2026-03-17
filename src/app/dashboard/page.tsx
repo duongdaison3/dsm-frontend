@@ -56,7 +56,9 @@ export default function DashboardPage() {
     const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
     // Admin Form
-    const [newEmail, setNewEmail] = useState('');
+    const [newUsername, setNewUsername] = useState(''); // Thay thế cho newEmail cũ
+    const [bulkUsers, setBulkUsers] = useState('');
+    const [isBulkSubmitting, setIsBulkSubmitting] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [newName, setNewName] = useState('');
     const [newRole, setNewRole] = useState('staff');
@@ -230,17 +232,46 @@ export default function DashboardPage() {
             const res = await fetch('https://dsm-api-backend.onrender.com/users/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify({ email: newEmail, password: newPassword, full_name: newName, role: newRole })
+                body: JSON.stringify({ username: newUsername, password: newPassword, full_name: newName, role: newRole })
             });
             if (!res.ok) throw new Error((await res.json()).detail);
             setAdminMsg('Tạo tài khoản thành công!');
-            setNewEmail('');
+            setNewUsername('');
             setNewPassword('');
             setNewName('');
             setNewRole('staff');
             setTimeout(() => setAdminMsg(''), 3000);
         } catch (e: Error | unknown) {
             setAdminMsg('Lỗi: ' + (e instanceof Error ? e.message : 'Lỗi không xác định'));
+        }
+    };
+
+    const handleBulkCreate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsBulkSubmitting(true);
+        const token = localStorage.getItem('access_token');
+
+        // Tách dữ liệu từ Textarea thành Array
+        const lines = bulkUsers.split('\n').filter(line => line.trim() !== '');
+        const usersArray = lines.map(line => {
+            const [username, password, full_name, role] = line.split(',').map(item => item.trim());
+            return { username, password, full_name, role: role || 'staff' };
+        });
+
+        try {
+            const res = await fetch('https://dsm-api-backend.onrender.com/users/bulk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(usersArray)
+            });
+            if (!res.ok) throw new Error((await res.json()).detail);
+            setAdminMsg(`Đã thêm thành công ${usersArray.length} nhân sự!`);
+            setBulkUsers('');
+            setTimeout(() => setAdminMsg(''), 4000);
+        } catch (e: Error | unknown) {
+            setAdminMsg('Lỗi định dạng. Vui lòng kiểm tra lại!');
+        } finally {
+            setIsBulkSubmitting(false);
         }
     };
 
@@ -372,20 +403,41 @@ export default function DashboardPage() {
                         </div>
 
                         {/* FORM ADD TÀI KHOẢN */}
-                        <div className="col-span-1 bg-white rounded-xl shadow p-6 border-t-4 border-green-500">
-                            <h2 className="font-bold text-xl text-gray-800 mb-4">Thêm Nhân Sự Mới</h2>
-                            <form onSubmit={handleCreateUser} className="space-y-4">
-                                <input type="text" placeholder="Họ và Tên" value={newName} onChange={e => setNewName(e.target.value)} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
-                                <input type="email" placeholder="Email đăng nhập" value={newEmail} onChange={e => setNewEmail(e.target.value)} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
-                                <input type="password" placeholder="Mật khẩu khởi tạo" value={newPassword} onChange={e => setNewPassword(e.target.value)} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
-                                <select value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
-                                    <option value="admin">Quản trị viên (Admin)</option>
+                        <div className="lg:col-span-1 bg-white rounded-xl shadow p-6 border-t-4 border-green-500">
+                            <h2 className="font-bold text-xl text-gray-800 mb-4">Thêm Nhân Sự</h2>
+
+                            {/* Form Thêm 1 User */}
+                            <form onSubmit={handleCreateUser} className="space-y-3 mb-6">
+                                <input type="text" placeholder="Tên đăng nhập (Username)" value={newUsername} onChange={e => setNewUsername(e.target.value)} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm" />
+                                <input type="password" placeholder="Mật khẩu" value={newPassword} onChange={e => setNewPassword(e.target.value)} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm" />
+                                <input type="text" placeholder="Họ và Tên" value={newName} onChange={e => setNewName(e.target.value)} required className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm" />
+                                <select value={newRole} onChange={e => setNewRole(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm">
                                     <option value="staff">Nhân viên (Staff)</option>
                                     <option value="depart">Trưởng phòng (Depart)</option>
+                                    <option value="admin">Quản trị viên (Admin)</option>
                                 </select>
-                                <button type="submit" className="w-full py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700">Tạo Tài Khoản</button>
-                                {adminMsg && <p className="text-sm text-center font-semibold text-green-700 mt-2">{adminMsg}</p>}
+                                <button type="submit" className="w-full py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 text-sm">Thêm 1 người</button>
                             </form>
+
+                            {/* Form Thêm Hàng Loạt */}
+                            <div className="pt-5 border-t border-gray-200">
+                                <h3 className="font-bold text-gray-800 mb-2">Thêm Nhanh (Bulk Add)</h3>
+                                <p className="text-xs text-gray-500 mb-3">Cú pháp: <code className="bg-gray-100 text-red-500 px-1 rounded">username, pass, Họ Tên, role</code></p>
+                                <form onSubmit={handleBulkCreate} className="space-y-3">
+                                    <textarea
+                                        value={bulkUsers}
+                                        onChange={e => setBulkUsers(e.target.value)}
+                                        rows={4}
+                                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm font-mono whitespace-pre text-nowrap"
+                                        placeholder="pea.duong, 123456, Dương Đại Sơn, admin&#10;nhanvien1, 123456, Nguyễn Văn A, staff"
+                                    />
+                                    <button type="submit" disabled={isBulkSubmitting} className="w-full py-2 bg-green-100 text-green-700 border border-green-300 font-bold rounded-lg hover:bg-green-200 text-sm">
+                                        {isBulkSubmitting ? 'Đang xử lý...' : 'Thêm Hàng Loạt'}
+                                    </button>
+                                </form>
+                            </div>
+
+                            {adminMsg && <p className="text-sm text-center font-semibold text-green-700 mt-4 bg-green-50 p-2 rounded">{adminMsg}</p>}
                         </div>
                     </div>
                 )}

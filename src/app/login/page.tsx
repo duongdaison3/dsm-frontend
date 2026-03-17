@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,7 @@ export default function LoginPage() {
     try {
       // API của FastAPI yêu cầu định dạng x-www-form-urlencoded cho Login
       const formData = new URLSearchParams();
-      formData.append('username', email);
+      formData.append('username', username);
       formData.append('password', password);
 
       const response = await fetch('https://dsm-api-backend.onrender.com/login', {
@@ -64,14 +64,14 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">Tên người dùng</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-black"
-              placeholder="admin@example.com"
+              placeholder="admin"
             />
           </div>
 
