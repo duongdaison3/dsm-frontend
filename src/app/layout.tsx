@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer"; // Import component Footer vừa tạo
+import { Analytics } from "@vercel/analytics/next";
 
 // Tải font Inter với các ký tự tiếng Việt
 const inter = Inter({ subsets: ["latin", "vietnamese"] });
@@ -38,6 +39,7 @@ export default function RootLayout({
 
         {/* Chân trang sẽ luôn xuất hiện ở cuối mọi màn hình */}
         <Footer />
+        <Analytics />
 
       </body>
     </html>
